@@ -104,8 +104,7 @@ static inline bool readid_matches(string readid,
     size_t pos = readid.find(" ");
     if (pos != string::npos) readid.erase(pos);
     pos = readid.rfind("/");
-    if (pos == readid.size() - 3) readid.erase(pos);
-
+    if (pos == readid.size() - 2) readid.erase(pos);
     return readids.find(readid) != readids.end();
 }
 
@@ -121,7 +120,7 @@ bool print_matching_reads(const string &fastqfile, const std::unordered_set<stri
     while (!atEnd(reads_in)) {
         n_reads++;
         readRecord(id, seq, qual, reads_in);
-        if (readid_matches) {
+        if (readid_matches(id, readids)) {
             n_match++;
             writeRecord(reads_out, id, seq, qual);
         }
