@@ -131,7 +131,11 @@ bool print_matching_reads(const string &fastqfile, const std::unordered_set<stri
     cerr << "  Output " << n_match << " matching reads\n";
 }
 
-static const string usage = "USAGE:\n  bam2pairfq -r region FASTQ BAM";
+static const string usage = 
+    "USAGE:\n  bam2pairfq -r region FASTQ BAM\n\n"
+    "Extracts reads (pairs) that align to `region`. One can supply -r\n"
+    "many times with different regions.";  // no \n, done below
+
 int
 main(int argc, char *argv[])
 {
