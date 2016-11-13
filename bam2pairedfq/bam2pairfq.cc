@@ -128,6 +128,7 @@ bool print_matching_reads(const string &fastqfile, const std::unordered_set<stri
     cerr << "  Finished extracting reads\n";
     cerr << "  Processed " << n_reads << " reads\n";
     cerr << "  Output " << n_match << " matching reads\n";
+    return true;
 }
 
 static const string usage = 
