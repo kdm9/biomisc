@@ -1,22 +1,35 @@
 #!/usr/bin/env python3
+# bam2pairedfastq -- extract paired (or single) reads if one maps to some region
+# Copyright (c) 2016 Kevin Murray <kdmfoss@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+# DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+# OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+# Uses khmer's utils module for a broken paired reader.
+
 import pysam
 import screed
 import khmer_utils as ku
 from sys import argv, stderr, stdout
 
 
-def printread(read, file=None):
-    if read.quality:
-        print("@", read.name, ' ', read.description, sep='', file=file)
-        print(read.sequence, file=file)
-        print("+", file=file)
-        print(read.quality, file=file)
-    else:
-        print(">", read.name, ' ', read.description, sep='', file=file)
-        print(read.sequence, file=file)
-
-
 def notag(readid):
+    '''Read name to "basename" of read, as appears in sam/bam'''
     readid, _, _ = readid.partition(' ')
     if readid[-2] == '/' and readid[-1] in "12":
         return readid[:-2]
@@ -24,6 +37,8 @@ def notag(readid):
 
 
 def process_file(bamfile, regions, readfile, outstream=stdout):
+    print("Extracting reads from ", readfile, "that align to", regions, "in",
+          bamfile,  file=stderr)
     samf = pysam.AlignmentFile(bamfile, 'rb')
     to_extract = set()
     for region in regions:
